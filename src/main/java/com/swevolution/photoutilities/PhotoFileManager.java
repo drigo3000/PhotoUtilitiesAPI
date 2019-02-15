@@ -7,6 +7,7 @@ package com.swevolution.photoutilities;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -28,11 +29,7 @@ public class PhotoFileManager implements Serializable {
 
     public static void uploadPhoto(InputStream is, String path, String id, String fileName) {
         try {
-            Path p = Paths.get(path);
-            File f = new File(path);
-            if (!f.exists()) {
-                Files.createDirectories(p);
-            }
+            createDirectoryStructure(path);
 
             BufferedImage originalImage = ImageIO.read(is);
 
@@ -72,6 +69,7 @@ public class PhotoFileManager implements Serializable {
 
     public static void uploadSearchPhoto(InputStream is, String fileName, String path) {
         try {
+            createDirectoryStructure(path);
             BufferedImage originalImage = ImageIO.read(is);
 
             BufferedImage lowResImage = Scalr.resize(originalImage,
@@ -131,6 +129,14 @@ public class PhotoFileManager implements Serializable {
         File hdFile = new File(path + "hd_" + id + "_" + link);
         if (hdFile.exists()) {
             hdFile.delete();
+        }
+    }
+
+    private static void createDirectoryStructure(String path) throws IOException {
+        Path p = Paths.get(path);
+        File f = new File(path);
+        if (!f.exists()) {
+            Files.createDirectories(p);
         }
     }
 }
